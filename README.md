@@ -1,46 +1,56 @@
-# Rubik's Cube Solver C++
-C++ program that takes the initial and final configurations of the cube and will find a sequence of moves that will transform the initial state into the final state. The solutions is found by using one uninformed search strategy i.e. iterative-deepening and one informed search strategy named A*
+#Rubik’s Cube Solver in C++
+#Project Overview
 
-# About the Project
-In this part of the assignment write a C++ program that will take the initial and
-final configurations of the cube and will find a sequence of moves that will transform the initial
-state into the final state. The solutions will be found by using one uninformed search strategy i.e.
-iterative-deepening and one informed search strategy named A*
+This project focuses on implementing a Rubik’s Cube solver in C++ that transforms a given starting configuration of the cube into a desired goal configuration. The solver uses two different search techniques:
 
-For this assignment it is assumed that turning a face of the Rubik’s cube by 90o either in
-clockwise or counter clockwise direction is considered one move each
-Program takes as input a file containing the initial and final configuration pair and will
-output the set of moves needed to solve the puzzle
+1) Iterative Deepening Search (IDS) – an uninformed search strategy.
 
-# Input File Format
-The first line of the file will contains the initial configuration (a space separated list of 54 digit
-code of the colors) the second line contains the final configuration.
-A complete configuration of a puzzle consists of 54 space separated digits which give the color
-information on each of the six sides of the cube. A color on each of the nine cubes on a given side
-is a digit from the set {1, 2, 3, 4, 5, 6}. The first 9 digits of these 54 digits specifying the colors of
-the 9 cubes faces on the front side (left-right and top-bottom), the next 9 numbers specifying the
-color information on the back side and then comes the color information of top, bottom, left and
-right sides.
+2) A* – an informed search strategy that relies on heuristics.
 
-# Results/ Report
-Introduction
-We are writing a C++ program that will takes the initial and
-final configurations of the cube and will find a sequence of moves that will transform the initial
-state into the final state. The solutions will be found by using one uninformed search strategy i.e.
-iterative-deepening and one informed search strategy named A*.
+ The program accepts as input a file containing two lines:
 
-### Methodology
-### Iterative Deepening Algorithm
-In this algorithm, we used a stack to maintain the nodes and we simply pop the node (at the top) and compares with goal state then if it is not goal then check depth has it reached the limit if yes then stop and remove it from stack else make its 12 childs and push in the stack and repeat until the goal is found.
+-> The first line represents the initial state of the cube.
 
-### A* Algorithm:
-In this technique, we for choosing a child we used a heuristic function which gave us a score by comparing two states and telling how much nodes of it are matching. So instead of blindly picking a child node we picked with the highest score and add the cost from start to that node and cost from that node to goal (guess given by our heuristic function) and maintain two lists (Open and Closed). At each step we compare this cost if a node with the same position as successor is in the OPEN list which has a lower cost than successor, skip this successor if a node with the same position as successor is in the CLOSED list which has a lower cost than successor, skip this successor otherwise, add the node to the open list and repeat this until the goal is found.
+-> The second line represents the target state.
+
+Each configuration is expressed as 54 space-separated digits, corresponding to the six faces of the cube. Each digit belongs to {1, 2, 3, 4, 5, 6}, denoting colors. The first 9 digits correspond to the front face, followed by back, top, bottom, left, and right faces in that order.
+
+Every 90° rotation of a face—clockwise or counterclockwise—is counted as one move. The output is a sequence of such moves required to solve the cube.
+
+# Methodology
+#Iterative Deepening Search (IDS)
+
+In IDS, we explore states depth by depth. A stack structure is used to keep track of nodes. At each step:
+
+-> The top node is removed and checked against the goal state.
+
+-> If the goal is not reached and the depth limit has not been exceeded, all 12 possible moves are generated to create new states, which are pushed onto the stack.
+
+-> This process continues until either the goal is found or the depth limit is reached.
+
+#A* Search
+For the informed strategy, A* search is employed.
+
+-> Each node is evaluated using a heuristic function that estimates its closeness to the goal.
+
+-> The cost function is defined as:
+
+𝑓(𝑛)=𝑔(𝑛)+ℎ(𝑛) where 𝑔(𝑛) is the path cost from the start node and ℎ(𝑛) is the heuristic estimate of the remaining cost.
+
+-> Two lists (OPEN and CLOSED) are maintained. At each iteration, the node with the lowest cost is selected from OPEN. If a successor already exists in OPEN or CLOSED with a better cost, it is ignored; otherwise, it is added for further exploration.
+
+-> The heuristic used here is the count of mismatched positions compared to the goal state.
 
 ### Results
-In Iterative Deepening, if the cube is 5-10 moves away it usually finds the solution in seconds but if current state is messed up then it takes a lot time and consumes more memory 12depth, usually program stops due to filling of all the memory and takes hours, may be days in solving and program closes due to short memory. But in contrast, A* guess it in less moves with more efficiency in much less time and finds the solution. However, the heuristic should be good enough to guess correct moves. 
-Our heuristic was number of mismatches at a given state from the goal state.
 
-### Conclusions
-As we can see the results, it clearly shows that A* algorithm is far better than Iterative Deepening.
-A* algorithm gives solution in much less time and more optimal solution. In contrast, Iterative deepening takes much more memory, time and is far less efficient than A*. It makes 12Depth nodes which requires much memory and processing time. But A* solves the problem in much less time and taking less memory by making wise decisions. But A* mainly depends on the heuristic function, the more the guess of heuristic is correct, the less and more optimal solution it will give. However, a bad heuristic can guide us to a wrong path and may take more time. 
-In short, A* is much better technique than Iterative Deepening in solving the required problem.
+-> IDS performs adequately when the cube is only a few moves (5–10) away from the solution. However, as the depth increases, the search space grows exponentially. At depths beyond 12, memory usage becomes extremely high, and execution may take hours or even crash due to exhaustion of resources.
+
+-> A* performs significantly better. By prioritizing states closer to the goal (based on the heuristic), it avoids unnecessary exploration and typically finds solutions much faster and with less memory. However, its performance strongly depends on the quality of the heuristic—better heuristics yield faster, more optimal solutions.
+
+### Conclusion
+
+From the experiments, it is evident that A* outperforms Iterative Deepening in both efficiency and solution quality. IDS suffers from exponential growth in states and quickly becomes impractical at larger depths. In contrast, A* reduces the search space by making informed choices, requiring fewer nodes to be expanded and consuming less time and memory.
+
+That said, A* is only as good as the heuristic guiding it. With a well-designed heuristic (like the mismatch count used here), it can deliver solutions much faster and more optimally. If the heuristic is poor, however, A* may take longer or produce less efficient results.
+
+In summary, A* proves to be the more effective approach for solving the Rubik’s Cube transformation problem in this project, while Iterative Deepening illustrates the limitations of uninformed search strategies in complex problem spaces.
